@@ -1,33 +1,100 @@
-# 🐌 Snail Unrolling – Computational Mosaicing & Pattern Analysis
+## 🐌 Snail Unrolling – Computational Mosaicing & Pattern Analysis
 
-This project aims to digitally "unroll" 3D snail shells into 2D flat maps to analyze biological patterning and growth dynamics.
+Unroll the complex 3D spiral of a snail shell into a 2D map for analysis, pattern modeling, and biological insight. Inspired by discussions with Dick Gordon, this project investigates the mechanisms of shell growth, damage recovery, and pigmentation pattern formation.
 
-## 🧪 Core Concept
-Snail shells grow in logarithmic spirals. By unwrapping the shell surface digitally, we can study pigment patterns, damage regeneration, and mathematical modeling in a flat, analyzable format.
+---
 
-## 📸 Pipeline
-1. Capture narrow strip images around the shell
-2. Take full 360° photos
-3. Detect shell axis + geometry
-4. Extract closest pixels to reduce distortion
-5. Flatten to 2D via projection
+### 🚀 Features
+- 🌀 **Extract**: Narrow strip extraction from shell images
+- 🧩 **Stitch**: Mosaicing of shell strips into a full panoramic view
+- 🧭 **Axis Detection**: Identify spiral center and orientation
+- 🗺 **Flatten**: Project spiral surface into a 2D plane (“Unrolling the Snail”)
+- 🎨 **Simulate**: Generate synthetic shell patterns with Turing and Cellular Automata models
+- 🩹 **Compare**: Analyze pre-/post-injury shell patterns for damage recovery and modeling validation
+- ✅ **Command-Line Ready** with Makefile + CLI scripting
 
-## 🧠 Modeling
-We’ll explore:
-- Reaction-Diffusion systems (e.g., Turing)
-- Cellular Automata (e.g., Wolfram’s rules)
-- Fourier Analysis (pattern periodicity)
+---
 
-## 🛠️ Structure
-- `src/` – modular code for projection, stitching, modeling
-- `notebooks/` – Jupyter demos and experiments
-- `data/` – raw and processed image sets
+### 📁 Project Structure
+```
+snail-unrolling/
+├── data/
+│   ├── raw/                      ← Raw snail shell images
+│   └── processed/                ← Processed strips, flattened outputs
+├── src/
+│   ├── capture/
+│   │   └── extractor.py          ← Extract strips from 360° shell images
+│   ├── mosaicing/
+│   │   └── stitcher.py           ← Mosaicing with ORB/SIFT
+│   ├── axis_detection/
+│   │   └── axis_finder.py        ← Spiral axis + orientation detection
+│   ├── projection/
+│   │   └── flatten.py            ← Polar projection to 2D unrolled map
+│   ├── modeling/
+│   │   ├── turing.py             ← Reaction-diffusion pattern simulator
+│   │   └── cellular_automata.py  ← 1D cellular automaton pattern generator
+│   ├── analysis/
+│   │   └── injury_analysis.py    ← SSIM comparison of shell before/after injury
+│   └── utils/
+│       └── image_utils.py        ← (Optional) Image resizing, normalization
+├── run_injury_analysis.py        ← CLI tool for simulating + comparing patterns
+├── pattern_analysis.py           ← Demo/plotting script for comparing patterns
+├── requirements.txt
+├── Makefile                      ← Easy command-line interface
+├── .gitignore
+└── README.md
+```
 
-## 🚀 Status
-🟢 Actively developing  
-🧠 Seeking high-res images of snail shells  
-💡 Open to collaboration
+---
 
-## 🧑‍💻 Author
-Maintained by a neurodivergent-led interdisciplinary team blending AI, biology, and mathematics.
+### 🛠️ Usage
+
+#### 🔧 Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+#### 🐌 Run full CLI pattern pipeline:
+```bash
+make run
+```
+
+#### 🛠 Other CLI tasks:
+```bash
+make extract     # Strip from raw images
+make stitch      # Mosaic them
+make axis        # Detect shell axis
+make flatten     # Flatten into 2D
+make turing      # Simulate Turing pattern
+make ca          # Simulate cellular automata
+make compare     # Run injury comparison
+make clean       # Delete generated outputs
+```
+
+---
+
+### 🧠 Why Turing & Cellular Automata?
+
+Snail shell patterns aren’t random — they arise from dynamic biological processes:
+
+- **Turing Patterns** (reaction-diffusion systems) simulate morphogen-based pigment regulation
+- **Cellular Automata** simulate discrete rule-based development, reflecting genetic control systems
+
+Both models allow us to test biological hypotheses — especially in **injury recovery**, where regenerated patterns may reveal deeper properties of developmental stability and error correction.
+
+---
+
+### 🩹 Shell Injury Recovery Hypothesis
+
+Injured shells that regenerate offer a **natural experiment**:  
+> Does the snail “replay” the same rules to rebuild its pattern?
+
+By comparing pre- and post-injury segments, we can test whether **patterning logic is resilient**, disrupted, or adaptive — helping understand both normal growth and developmental plasticity.
+
+---
+
+### 💡 Credits
+
+Developed in collaboration with ideas and guidance from **Dick Gordon**.  
+Maintained by an interdisciplinary team blending neurodiversity, computational biology, and machine learning.
 
