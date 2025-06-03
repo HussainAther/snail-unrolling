@@ -22,8 +22,8 @@ def compare_shell_segments(before_path, after_path, show=True):
     """
     Compare pre- and post-injury unrolled shell segments.
     """
-    before = load_and_prepare(before_path)
-    after = load_and_prepare(after_path)
+    before = cv2.imread(before_path, cv2.IMREAD_GRAYSCALE)
+    after = cv2.imread(after_path, cv2.IMREAD_GRAYSCALE)
 
     score, diff = ssim(before, after, full=True)
     diff = (diff * 255).astype("uint8")
@@ -35,7 +35,10 @@ def compare_shell_segments(before_path, after_path, show=True):
         axs[1].imshow(after, cmap='gray')
         axs[1].set_title("After Injury")
         axs[2].imshow(diff, cmap='inferno')
-        axs[2].set_title(f"SSIM Difference Map\nScore = {score:.4f}")
+        axs[2].set_title(f"SSIM Difference Map\nScore = {score:.4f}") 
+        cv2.imshow("SSIM Map", diff)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         for ax in axs:
             ax.axis('off')
         plt.tight_layout()
