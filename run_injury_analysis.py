@@ -21,12 +21,16 @@ if __name__ == "__main__":
 
     print(f"SSIM Score: {score:.4f}")
 
+    # Make output directory
+    os.makedirs("log_output", exist_ok=True)
+
+    # Save heatmap difference image
     if diff is not None:
-        os.makedirs("log_output", exist_ok=True)
         diff_path = os.path.join("log_output", args.save_diff)
         cv2.imwrite(diff_path, diff)
         print(f"Saved SSIM heatmap to {diff_path}")
 
+    # Save SSIM score to JSON
     save_ssim_result(
         score=score,
         before_path=args.before,
