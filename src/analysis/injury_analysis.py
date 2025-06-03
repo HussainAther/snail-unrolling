@@ -3,6 +3,8 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import json
+import os
 from skimage.metrics import structural_similarity as ssim
 
 def load_and_prepare(path, size=(512, 512)):
@@ -41,10 +43,28 @@ def compare_shell_segments(before_path, after_path, show=True):
 
     return score, diff
 
+def save_ssim_result(score, before_path, after_path, output_path="ssim_result.json"):
+    result = {
+        "before_image": os.path.basename(before_path),
+        "after_image": os.path.basename(after_path),
+        "ssim_score": float(score)
+    }
+    with open(output_path, "w") as f:
+        json.dump(result, f, indent=4)
+
 # Example usage
 if __name__ == "__main__":
     before_img = "data/processed/unrolled_snail_before.png"
     after_img = "data/processed/unrolled_snail_after.png"
-    score, _ = compare_shell_segments(before_img, after_img)
+    score, _ = compare_shell_segments(before_img, after_img, show=True)
+
+    print(f"SSIM Score: {score:.4f}")
+
+    save_ssim_result(
+        score=score,
+        before_path=before_img,
+        after_path=after_img,
+        output_path="ssim_result.json"
+    )
     print(f"SSIM Similarity Score: {score:.4f}")
 
