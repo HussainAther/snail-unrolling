@@ -91,10 +91,45 @@ Injured shells that regenerate offer a **natural experiment**:
 
 By comparing pre- and post-injury segments, we can test whether **patterning logic is resilient**, disrupted, or adaptive — helping understand both normal growth and developmental plasticity.
 
+
+# 🐌 Snail Unrolling Pattern Analysis
+
+## Usage Examples
+
+### 1. Run Shell Projection
+```bash
+python src/projection/flatten.py --image data/raw/shell.jpg --cx 300 --cy 300 --output data/processed/unrolled_snail.png
+```
+
+### 2. Compare Before/After Injury Shells
+```bash
+python run_injury_analysis.py \
+  --before data/processed/unrolled_snail_before.png \
+  --after data/processed/unrolled_snail_after.png \
+  --no-show \
+  --save-json ssim_result.json \
+  --save-diff diff_map.png
+```
+
+### 3. Generate a Turing Pattern
+```bash
+python generate_turing.py
+# Output saved to: turing_pattern.png
+```
+
+### 4. Run Full Analysis Pipeline (WIP)
+```bash
+python pipeline/analyze_folder.py --input-folder data/processed/snail_pairs
+```
+
+## More Info
+See CONTRIBUTING.md and photo_checklist.md for how to help and contribute.
+
 ---
 
 ### 💡 Credits
 
 Developed in collaboration with ideas and guidance from **Dick Gordon**.  
 Maintained by an interdisciplinary team blending neurodiversity, computational biology, and machine learning.
+
 
