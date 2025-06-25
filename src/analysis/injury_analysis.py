@@ -71,3 +71,38 @@ if __name__ == "__main__":
     )
     print(f"SSIM Similarity Score: {score:.4f}")
 
+    import argparse
+    import os
+    import cv2
+
+    parser = argparse.ArgumentParser(description="Compare unrolled snail shell patterns using SSIM")
+    parser.add_argument("--before", required=True, help="Path to shell image before injury")
+    parser.add_argument("--after", required=True, help="Path to shell image after injury")
+    parser.add_argument("--no-show", action="store_true", help="Suppress SSIM heatmap display")
+    parser.add_argument("--save-json", default="ssim_result.json", help="Where to save SSIM score JSON")
+    parser.add_argument("--save-diff", default="diff_output.png", help="Where to save SSIM heatmap image")
+
+    args = parser.parse_args()
+
+    score, diff = compare_shell_segments(
+        before_path=args.before,
+        after_path=args.after,
+        show=not args.no_show
+    )
+
+    os.makedirs("log_output", exist_ok=True)
+
+    if diff is not None:
+        diff_path = os.path.join("log_output", args.save_diff)
+        cv2.imwrite(diff_path, diff)
+        print(f"Saved SSIM map to {diff_path}")
+
+    save_ssim_result(
+        score=score,
+        before_path=args.before,
+        after_path=args.after,
+        output_path=os.path.join("log_output", args.save_json)
+    )
+
+    print(f"SSIM Score: {score:.4f}")
+
