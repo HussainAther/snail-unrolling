@@ -1,0 +1,28 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Jupyter/IPython
+.ipynb_checkpoints/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# IDEs/editors
+.vscode/
+.idea/
+
+# Output files
+*.png
+*.jpg
+*.json
+log_output/
+*.npz
+*.csv
+
+# Virtual environments
+venv/
+.env/
+
