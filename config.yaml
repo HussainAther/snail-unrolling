@@ -1,7 +1,7 @@
-# src/utils/config_loader.py
-import yaml
+# Turing simulation configuration
 
-def load_config(path="config.yaml"):
-    with open(path, "r") as f:
-        return yaml.safe_load(f)
+steps: 7000          # Number of simulation steps
+seed: 1234           # Random seed for reproducibility
+output: "outputs/u_map.png"    # Output path for the U component
+output_v: "outputs/v_map.png"  # Output path for the V component
 
