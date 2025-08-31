@@ -87,9 +87,12 @@ Both models allow us to test biological hypotheses — especially in **injury re
 ### 🩹 Shell Injury Recovery Hypothesis
 
 Injured shells that regenerate offer a **natural experiment**:  
-> Does the snail “replay” the same rules to rebuild its pattern?
+> Does the snail "replay" the same rules to rebuild its pattern?
 
 By comparing pre- and post-injury segments, we can test whether **patterning logic is resilient**, disrupted, or adaptive — helping understand both normal growth and developmental plasticity.
+
+Snail shell regeneration offers a way to test if pigment patterning rules persist through biological disruption. By comparing pre- and post-injury segments, we can analyze whether underlying mechanisms (e.g., Turing patterns) are stable, adaptive, or divergent after damage.
+
 
 ---
 
