@@ -3,39 +3,23 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def run_gray_scott(width=200, height=200, Du=0.16, Dv=0.08, F=0.035, k=0.06, steps=10000):
-    """
-    Simulate Gray-Scott reaction-diffusion system.
-    
-    Returns:
-        U, V (ndarrays): Concentrations of chemical A (U) and B (V)
-    """
-    U = np.ones((height, width))
-    V = np.zeros((height, width))
-
-    # Seed initial square in center
+def run_gray_scott(steps=5000):
+    # Initialize fields
+    size = 256
+    U = np.ones((size, size))
+    V = np.zeros((size, size))
     r = 20
-    U[height//2 - r:height//2 + r, width//2 - r:width//2 + r] = 0.50
-    V[height//2 - r:height//2 + r, width//2 - r:width//2 + r] = 0.25
+    U[size//2 - r:size//2 + r, size//2 - r:size//2 + r] = 0.50
+    V[size//2 - r:size//2 + r, size//2 - r:size//2 + r] = 0.25
 
-    def laplacian(Z):
-        return (
-            -4 * Z
-            + np.roll(Z, (0, -1), (0, 1))
-            + np.roll(Z, (0, 1), (0, 1))
-            + np.roll(Z, (-1, 0), (0, 1))
-            + np.roll(Z, (1, 0), (0, 1))
-        )
+    # Constants
+    Du, Dv, F, k = 0.16, 0.08, 0.035, 0.065
 
-    for i in range(steps):
-        Lu = laplacian(U)
-        Lv = laplacian(V)
-        uvv = U * V * V
-        U += (Du * Lu - uvv + F * (1 - U))
-        V += (Dv * Lv + uvv - (F + k) * V)
-
-        if i % 1000 == 0:
-            print(f"Step {i}/{steps}")
+    for _ in range(steps):
+        Lu = cv2.Laplacian(U, cv2.CV_64F)
+        Lv = cv2.Laplacian(V, cv2.CV_64F)
+        U += Du * Lu - U * V**2 + F * (1 - U)
+        V += Dv * Lv + U * V**2 - (F + k) * V
 
     return U, V
 
