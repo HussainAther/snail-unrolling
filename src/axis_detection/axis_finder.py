@@ -2,51 +2,54 @@
 
 import cv2
 import numpy as np
+from typing import Tuple
 
-def detect_shell_axis(image, debug=False):
+def find_spiral_axis(image: np.ndarray) -> Tuple[int, int]:
     """
-    Detect the spiral center and orientation of a snail shell in an image.
-    
+    Estimate the spiral axis (center point) of a snail shell image.
+
+    This uses:
+    - grayscale conversion
+    - Gaussian blur
+    - Hough Circle Transform to find dominant circular contour
+
     Returns:
-        center (tuple): (x, y) pixel coordinates of spiral center
-        orientation (float): rotation angle in degrees
-        contour (ndarray): the largest shell-like contour (optional)
+        (cx, cy): estimated center of the shell spiral
     """
+
+    if image is None:
+        raise ValueError("find_spiral_axis() received empty image")
+
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    blurred = cv2.GaussianBlur(gray, (7, 7), 0)
+    blur = cv2.GaussianBlur(gray, (9, 9), 2)
 
-    # Edge detection
-    edges = cv2.Canny(blurred, 50, 150)
+    # Try detecting circles
+    circles = cv2.HoughCircles(
+        blur,
+        cv2.HOUGH_GRADIENT,
+        dp=1.2,
+        minDist=50,
+        param1=80,
+        param2=30,
+        minRadius=20,
+        maxRadius=min(image.shape[:2]) // 2
+    )
 
-    # Find contours
-    contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if not contours:
-        raise ValueError("No contours found.")
+    if circles is not None:
+        circles = np.uint16(np.around(circles))
+        # Take the largest detected circle
+        largest = max(circles[0, :], key=lambda c: c[2])
+        cx, cy, _ = largest
+    else:
+        # Fallback: assume center of mass
+        M = cv2.moments(gray)
+        if M["m00"] != 0:
+            cx = int(M["m10"] / M["m00"])
+            cy = int(M["m01"] / M["m00"])
+        else:
+            # Fallback of fallback: image center
+            h, w = gray.shape[:2]
+            cx, cy = w // 2, h // 2
 
-    # Take the largest contour (assuming it's the shell)
-    largest = max(contours, key=cv2.contourArea)
-    (x, y), radius = cv2.minEnclosingCircle(largest)
-    center = (int(x), int(y))
-
-    # Use PCA to determine orientation
-    data_pts = np.array(largest, dtype=np.float64).reshape(-1, 2)
-    mean, eigenvectors = cv2.PCACompute(data_pts, mean=None, maxComponents=2)
-    angle = np.arctan2(eigenvectors[0,1], eigenvectors[0,0]) * (180.0 / np.pi)
-
-    if debug:
-        debug_img = image.copy()
-        cv2.circle(debug_img, center, int(radius), (0, 255, 0), 2)
-        cv2.drawContours(debug_img, [largest], -1, (255, 0, 0), 1)
-        cv2.imshow("Axis Detection Debug", debug_img)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-
-    return center, angle, largest
-
-# Example usage
-if __name__ == "__main__":
-    img_path = "data/raw/snail_001.jpg"
-    image = cv2.imread(img_path)
-    center, angle, _ = detect_shell_axis(image, debug=True)
-    print(f"Center: {center}, Rotation Angle: {angle:.2f} degrees")
+    return (cx, cy)
 
