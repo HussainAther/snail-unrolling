@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import os
+import argparse
 
 # Add src/ to Python path
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -9,7 +10,7 @@ from processing.extractor import extract_closest_strip
 from mosaicing.stitcher import stitch_images
 
 from axis_detection.axis_finder import find_spiral_axis
-from projection.flatten import flatten_snail
+from projection.flatten import polar_unroll
 
 
 def process_snail_folder(folder_path: str, output_dir: str, verbose: bool = False):
