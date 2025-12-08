@@ -76,8 +76,10 @@ def save_output(image, output_path, filename="stitched_strip.png"):
     os.makedirs(output_path, exist_ok=True)
     cv2.imwrite(os.path.join(output_path, filename), image)
 
-# Example usage (comment out if importing as module)
-if __name__ == "__main__":
+def stitch_images():
+    """
+    Stitch the images together.
+    """
     strips_folder = "data/processed"
     output_folder = "data/stitched"
     
@@ -85,3 +87,5 @@ if __name__ == "__main__":
     stitched_image = stitch_strips(strips, matcher_type="ORB")
     save_output(stitched_image, output_folder)
 
+if __name__ == "__main__":
+    stitch_images()

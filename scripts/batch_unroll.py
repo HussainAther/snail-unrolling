@@ -1,39 +1,48 @@
+#!/usr/bin/env python3
+import sys
 import os
-import argparse
-from src.processing.extractor import extract_closest_strip
-from src.processing.flatten import build_unrolled_projection
-import cv2
+
+# Add src/ to Python path
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
+
+from processing.extractor import extract_closest_strip
+from mosaicing.stitcher import stitch_images
+
+from axis_detection.axis_finder import find_spiral_axis
+from projection.flatten import flatten_snail
 
 
-def process_snail_folder(folder_path, output_dir, verbose=False):
-    # Sort all image files numerically
-    image_files = sorted(
-        [f for f in os.listdir(folder_path) if f.lower().endswith((".png", ".jpg", ".jpeg"))],
-        key=lambda x: int(os.path.splitext(x)[0])
-    )
-    strips = []
+def process_snail_folder(folder_path: str, output_dir: str, verbose: bool = False):
+    from processing.extractor import extract_closest_strip
+    from mosaicing.stitcher import stitch_images
+    from axis_detection.axis_finder import find_spiral_axis
+    from projection.flatten import flatten_shell
+    import cv2
 
-    for filename in image_files:
-        img_path = os.path.join(folder_path, filename)
-        image = cv2.imread(img_path)
-        if image is None:
-            if verbose:
-                print(f"Warning: Skipping unreadable image {img_path}")
-            continue
+    image_files = sorted([
+        os.path.join(folder_path, f)
+        for f in os.listdir(folder_path)
+        if f.lower().endswith(('.jpg', '.jpeg', '.png'))
+    ])
 
-        strip = extract_closest_strip(image)
-        strips.append(strip)
-
-    if strips:
-        unrolled = build_unrolled_projection(strips)
-        snail_name = os.path.basename(folder_path.rstrip("/"))
-        output_path = os.path.join(output_dir, f"{snail_name}_unrolled.png")
-        cv2.imwrite(output_path, unrolled)
+    if not image_files:
         if verbose:
-            print(f"✅ Saved unrolled image to: {output_path}")
-    else:
-        if verbose:
-            print(f"⚠️ No valid images found in: {folder_path}")
+            print(f"⚠️  No image files found in {folder_path}")
+        return
+
+    if verbose:
+        print(f"🖼️  Found {len(image_files)} images")
+
+    strips = [extract_closest_strip(cv2.imread(f)) for f in image_files]
+    stitched = stitch_images(strips)
+    axis = find_spiral_axis(stitched)
+    flattened = flatten_shell(stitched, axis)
+
+    out_path = os.path.join(output_dir, os.path.basename(folder_path) + "_unrolled.png")
+    cv2.imwrite(out_path, flattened)
+
+    if verbose:
+        print(f"✅ Saved unrolled image to {out_path}")
 
 
 def main():
