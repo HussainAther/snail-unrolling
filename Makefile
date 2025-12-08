@@ -50,3 +50,41 @@ clean:
 	rm -f pattern_comparison.png
 	rm -f data/stitched/*.png
 
+# Makefile for Snail Unrolling Project
+
+# Default input/output paths for batch unrolling
+INPUT_ROOT=data/raw
+OUTPUT_DIR=outputs
+
+# Python interpreter
+PYTHON=python
+
+# Batch unroll images from input_root and save to output_dir
+batch:
+	$(PYTHON) scripts/batch_unroll.py --input_root $(INPUT_ROOT) --output_dir $(OUTPUT_DIR) --verbose
+
+# Run unit tests (if you have tests in tests/)
+test:
+	pytest tests/
+
+# Format code with black
+format:
+	black src/ scripts/ tests/
+
+# Run Turing pattern generator with config
+turing:
+	$(PYTHON) run_gray_scott.py --config config/config.yaml --show
+
+# Clean outputs (be careful!)
+clean:
+	rm -rf $(OUTPUT_DIR)/*.png
+
+# Help
+help:
+	@echo "Available targets:"
+	@echo "  batch     - Run batch unrolling on input_root"
+	@echo "  test      - Run unit tests"
+	@echo "  format    - Format code using Black"
+	@echo "  turing    - Run Gray-Scott simulation from config"
+	@echo "  clean     - Delete all output projections"
+
