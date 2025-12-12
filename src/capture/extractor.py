@@ -34,6 +34,15 @@ def extract_narrow_strip(image, strip_height_ratio=0.1):
     strip = image[y_start:y_end, :]
     return strip
 
+def extract_closest_strip(image, strip_width=10):
+    """
+    """
+    h, w, c = image.shape
+    center_x = w // 2
+    half = strip_width // 2
+    return image[:, center_x - half : center_x + half]
+
+
 def save_strip(strip, output_path, filename):
     """
     Save the extracted strip as an image.

@@ -76,16 +76,27 @@ def save_output(image, output_path, filename="stitched_strip.png"):
     os.makedirs(output_path, exist_ok=True)
     cv2.imwrite(os.path.join(output_path, filename), image)
 
-def stitch_images():
+def stitch_images(images=None, strips_folder="data/processed"):
     """
-    Stitch the images together.
+    Stitch a list of images horizontally or load from folder if not provided.
     """
-    strips_folder = "data/processed"
-    output_folder = "data/stitched"
-    
-    strips = load_strips(strips_folder)
-    stitched_image = stitch_strips(strips, matcher_type="ORB")
-    save_output(stitched_image, output_folder)
+    if images is None:
+        images = load_strips(strips_folder)
+
+    # Proceed with stitching
+    total_width = sum(img.shape[1] for img in images)
+    max_height = max(img.shape[0] for img in images)
+
+    result = np.zeros((max_height, total_width, 3), dtype=np.uint8)
+
+    current_x = 0
+    for img in images:
+        result[:img.shape[0], current_x:current_x + img.shape[1]] = img
+        current_x += img.shape[1]
+
+    return result
+
+
 
 if __name__ == "__main__":
     stitch_images()
