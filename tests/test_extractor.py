@@ -1,22 +1,29 @@
 import numpy as np
-import pytest
-from capture.extractor import extract_strip, extract_center_strip, crop_center
+import cv2
+import tempfile
+import os
 
-def test_extract_strip_returns_array():
-    img = np.ones((100, 100, 3), dtype=np.uint8) * 255
-    center = (50, 50)
-    result = extract_strip(img, center, width=10)
-    assert result.ndim == 3
-    assert result.shape[1] == 10  # width
+from capture.extractor import extract_closest_strip
 
-def test_extract_center_strip_returns_array():
-    img = np.ones((100, 100, 3), dtype=np.uint8) * 255
-    result = extract_center_strip(img, width=10)
-    assert result.shape[1] == 10
 
-def test_crop_center_output_shape():
-    img = np.ones((100, 100, 3), dtype=np.uint8)
-    center = (50, 50)
-    cropped = crop_center(img, center, size=(20, 20))
-    assert cropped.shape == (20, 20, 3)
+def test_extract_closest_strip_shape():
+    """Ensure extracted strip has expected dimensions."""
+    img = np.zeros((100, 200, 3), dtype=np.uint8)
+
+    strip = extract_closest_strip(img, strip_width=20)
+
+    assert strip is not None
+    assert strip.shape[0] == 100
+    assert strip.shape[1] == 20
+    assert strip.shape[2] == 3
+
+
+def test_extract_closest_strip_values():
+    """Ensure strip actually comes from image center."""
+    img = np.zeros((100, 200, 3), dtype=np.uint8)
+    img[:, 90:110] = 255  # bright vertical band
+
+    strip = extract_closest_strip(img, strip_width=20)
+
+    assert strip.mean() > 200
 
