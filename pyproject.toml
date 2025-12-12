@@ -1,0 +1,8 @@
+[project]
+name = "snail-unrolling"
+version = "0.1.0"
+dependencies = ["opencv-python", "numpy"]
+
+[project.scripts]
+snail-unroll = "cli:main"
+
