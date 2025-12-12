@@ -1,16 +1,22 @@
-# tests/test_extractor.py
-
 import numpy as np
-import cv2
-from src.extractor import extract_closest_strip
+import pytest
+from capture.extractor import extract_strip, extract_center_strip, crop_center
 
-def test_extract_closest_strip():
-    img = np.ones((100, 100, 3), dtype=np.uint8) * 255  # White image
+def test_extract_strip_returns_array():
+    img = np.ones((100, 100, 3), dtype=np.uint8) * 255
     center = (50, 50)
-    strip = extract_closest_strip(img, center=center, width=5)
+    result = extract_strip(img, center, width=10)
+    assert result.ndim == 3
+    assert result.shape[1] == 10  # width
 
-    assert strip is not None
-    assert strip.shape[0] == img.shape[0]  # height
-    assert strip.shape[1] == 5  # width
-    assert strip.shape[2] == 3  # RGB
+def test_extract_center_strip_returns_array():
+    img = np.ones((100, 100, 3), dtype=np.uint8) * 255
+    result = extract_center_strip(img, width=10)
+    assert result.shape[1] == 10
+
+def test_crop_center_output_shape():
+    img = np.ones((100, 100, 3), dtype=np.uint8)
+    center = (50, 50)
+    cropped = crop_center(img, center, size=(20, 20))
+    assert cropped.shape == (20, 20, 3)
 

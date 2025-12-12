@@ -1,11 +1,12 @@
-# tests/test_stitcher.py
-
 import numpy as np
-from src.stitcher import stitch_images
+import pytest
+from mosaicing.stitcher import stitch_images
 
-def test_stitch_images():
-    strips = [np.full((100, 10, 3), fill_value=i, dtype=np.uint8) for i in range(5)]
-    result = stitch_images(strips)
-
-    assert result.shape == (100, 50, 3)  # 5 strips of width 10
+def test_stitch_images_returns_correct_shape():
+    img1 = np.ones((100, 100, 3), dtype=np.uint8) * 255
+    img2 = np.zeros((100, 100, 3), dtype=np.uint8)
+    result = stitch_images([img1, img2])
+    assert result.shape[0] == 100
+    assert result.shape[1] == 200  # stitched horizontally
+    assert result.shape[2] == 3
 
