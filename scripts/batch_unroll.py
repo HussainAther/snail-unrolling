@@ -2,6 +2,7 @@
 import sys
 import os
 import argparse
+import json
 
 # Add src/ to Python path
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "src"))
@@ -12,6 +13,14 @@ from mosaicing.stitcher import stitch_images
 from axis_detection.axis_finder import find_spiral_axis
 from projection.flatten import polar_unroll
 
+def load_center(subfolder):
+    axis_path = os.path.join(subfolder, "axis.json")
+    if os.path.exists(axis_path):
+        with open(axis_path, "r") as f:
+            data = json.load(f)
+        return (data["x"], data["y"])
+    else:
+        return (300, 250)  # Default fallback if axis.json missing
 
 def process_snail_folder(folder_path: str, output_dir: str, verbose: bool = False):
     from processing.extractor import extract_closest_strip
