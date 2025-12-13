@@ -60,7 +60,7 @@ batch:
 
 
 test:
-	pytest tests/
+        PYTHONPATH=src pytest tests/
 
 format:
 	black src/ scripts/ tests/

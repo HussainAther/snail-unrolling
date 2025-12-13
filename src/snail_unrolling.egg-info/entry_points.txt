@@ -1,0 +1,2 @@
+[console_scripts]
+snail-unroll = cli:main
