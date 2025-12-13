@@ -4,19 +4,6 @@ import cv2
 import numpy as np
 import os
 
-def load_strips(folder_path, image_exts=[".png", ".jpg", ".jpeg"]):
-    """
-    Load cropped strip images in order.
-    """
-    strips = []
-    for filename in sorted(os.listdir(folder_path)):
-        if any(filename.lower().endswith(ext) for ext in image_exts):
-            img_path = os.path.join(folder_path, filename)
-            img = cv2.imread(img_path)
-            if img is not None:
-                strips.append(img)
-    return strips
-
 def stitch_strips(strips, matcher_type="ORB"):
     """
     Stitch a list of narrow image strips horizontally.
@@ -76,14 +63,27 @@ def save_output(image, output_path, filename="stitched_strip.png"):
     os.makedirs(output_path, exist_ok=True)
     cv2.imwrite(os.path.join(output_path, filename), image)
 
+def load_strips(folder_path, image_exts=[".png", ".jpg", ".jpeg"]):
+    """
+    Load image strips from a folder and return them as a list of numpy arrays.
+    """
+    strips = []
+    for filename in sorted(os.listdir(folder_path)):
+        if any(filename.lower().endswith(ext) for ext in image_exts):
+            path = os.path.join(folder_path, filename)
+            strips.append(cv2.imread(path))  # or use Image.open(path) with PIL
+    return strips
+
 def stitch_images(images=None, strips_folder="data/processed"):
     """
-    Stitch a list of images horizontally or load from folder if not provided.
+    Stitch a list of images horizontally. If no images are provided, load from folder.
     """
     if images is None:
         images = load_strips(strips_folder)
 
-    # Proceed with stitching
+    if not images:
+        raise ValueError("No images provided for stitching.")
+
     total_width = sum(img.shape[1] for img in images)
     max_height = max(img.shape[0] for img in images)
 
