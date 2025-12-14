@@ -1,8 +1,11 @@
 # src/mosaicing/stitcher.py
 
 import cv2
+import logging
 import numpy as np
 import os
+logger = logging.getLogger(__name__)
+
 
 def stitch_strips(strips, matcher_type="ORB"):
     """
@@ -87,12 +90,7 @@ def load_strips(
             path = os.path.join(folder_path, filename)
             img = cv2.imread(path)
             if img is None:
-                msg = f"[WARN] Could not read image: {path}"
-                if fail_on_error:
-                    raise IOError(msg)
-                elif verbose:
-                    print(msg)
-                continue
+                logger.warning(f"Could not read image: {path}")                
             strips.append(img)
     return strips
 
