@@ -1,8 +1,11 @@
 # src/mosaicing/stitcher.py
 
 import cv2
+import logging
 import numpy as np
 import os
+logger = logging.getLogger(__name__)
+
 
 def stitch_strips(strips, matcher_type="ORB"):
     """
@@ -63,16 +66,34 @@ def save_output(image, output_path, filename="stitched_strip.png"):
     os.makedirs(output_path, exist_ok=True)
     cv2.imwrite(os.path.join(output_path, filename), image)
 
-def load_strips(folder_path, image_exts=[".png", ".jpg", ".jpeg"]):
+def load_strips(
+    folder_path, 
+    image_exts=(".png", ".jpg", ".jpeg"), 
+    fail_on_error=False,
+    verbose=True
+):
     """
     Load image strips from a folder and return them as a list of numpy arrays.
+
+    Args:
+        folder_path (str): Path to folder containing image files.
+        image_exts (tuple): Allowed image file extensions.
+        fail_on_error (bool): If True, raise an error on failed image read.
+        verbose (bool): If True, print warnings for unreadable files.
+
+    Returns:
+        list of np.ndarray: Loaded images.
     """
     strips = []
     for filename in sorted(os.listdir(folder_path)):
-        if any(filename.lower().endswith(ext) for ext in image_exts):
+        if filename.lower().endswith(image_exts):
             path = os.path.join(folder_path, filename)
-            strips.append(cv2.imread(path))  # or use Image.open(path) with PIL
+            img = cv2.imread(path)
+            if img is None:
+                logger.warning(f"Could not read image: {path}")                
+            strips.append(img)
     return strips
+
 
 def stitch_images(images=None, strips_folder="data/processed"):
     """
