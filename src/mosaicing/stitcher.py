@@ -1,8 +1,11 @@
 # src/mosaicing/stitcher.py
 
 import cv2
+import logging
 import numpy as np
 import os
+logger = logging.getLogger(__name__)
+
 
 def stitch_strips(strips, matcher_type="ORB"):
     """
@@ -63,31 +66,59 @@ def save_output(image, output_path, filename="stitched_strip.png"):
     os.makedirs(output_path, exist_ok=True)
     cv2.imwrite(os.path.join(output_path, filename), image)
 
-def load_strips(folder_path, image_exts=[".png", ".jpg", ".jpeg"]):
+def load_strips(
+    folder_path, 
+    image_exts=(".png", ".jpg", ".jpeg"), 
+    fail_on_error=False,
+    verbose=True
+):
     """
     Load image strips from a folder and return them as a list of numpy arrays.
+
+    Args:
+        folder_path (str): Path to folder containing image files.
+        image_exts (tuple): Allowed image file extensions.
+        fail_on_error (bool): If True, raise an error on failed image read.
+        verbose (bool): If True, print warnings for unreadable files.
+
+    Returns:
+        list of np.ndarray: Loaded images.
     """
     strips = []
     for filename in sorted(os.listdir(folder_path)):
-        if any(filename.lower().endswith(ext) for ext in image_exts):
+        if filename.lower().endswith(image_exts):
             path = os.path.join(folder_path, filename)
-            strips.append(cv2.imread(path))  # or use Image.open(path) with PIL
+            img = cv2.imread(path)
+            if img is None:
+                logger.warning(f"Could not read image: {path}")                
+            strips.append(img)
     return strips
+
 
 def stitch_images(images=None, strips_folder="data/processed"):
     """
     Stitch a list of images horizontally. If no images are provided, load from folder.
     """
     if images is None:
-        images = load_strips(strips_folder)
+    images = load_strips(strips_folder)
 
-    if not images:
-        raise ValueError("No images provided for stitching.")
+    first_height = images[0].shape[0]
+    for idx, img in enumerate(images):
+        if img.shape[0] != first_height:
+            logger.error(f"Image at index {idx} has mismatched height: {img.shape[0]} (expected {first_height})")
+            raise ValueError("All images must have the same height for horizontal stitching.")
 
+    # Proceed with stitching
     total_width = sum(img.shape[1] for img in images)
     max_height = max(img.shape[0] for img in images)
 
     result = np.zeros((max_height, total_width, 3), dtype=np.uint8)
+
+    first_height = images[0].shape[0]
+    for idx, img in enumerate(images):
+        if img.shape[0] != first_height:
+            logger.error(f"Image at index {idx} has mismatched height: {img.shape[0]} (expected {first_height})")
+            raise ValueError("All images must have the same height for horizontal stitching.")
 
     current_x = 0
     for img in images:
