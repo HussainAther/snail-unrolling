@@ -38,6 +38,9 @@ turing:
 ca:
 	python src/modeling/cellular_automata.py
 
+eca-sweep:
+	PYTHONPATH=. $(PYTHON) scripts/eca_sweep.py --rules 22,30,54,110,126,150 --outdir outputs
+
 compare:
 	python src/analysis/injury_analysis.py
 
