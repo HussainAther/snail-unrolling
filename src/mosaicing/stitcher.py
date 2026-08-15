@@ -96,9 +96,6 @@ def load_strips(
 
 
 def stitch_images(images=None, strips_folder="data/processed"):
-    """
-    Stitch a list of images horizontally. If no images are provided, load from folder.
-    """
     if images is None:
     images = load_strips(strips_folder)
 
@@ -119,6 +116,15 @@ def stitch_images(images=None, strips_folder="data/processed"):
         if img.shape[0] != first_height:
             logger.error(f"Image at index {idx} has mismatched height: {img.shape[0]} (expected {first_height})")
             raise ValueError("All images must have the same height for horizontal stitching.")
+
+    current_x = 0
+    for img in images:
+        result[:img.shape[0], current_x:current_x + img.shape[1]] = img
+        current_x += img.shape[1]
+
+    return result
+
+    result = np.zeros((max_height, total_width, 3), dtype=np.uint8)
 
     current_x = 0
     for img in images:
