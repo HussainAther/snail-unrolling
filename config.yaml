@@ -1,0 +1,7 @@
+# Turing simulation configuration
+
+steps: 7000          # Number of simulation steps
+seed: 1234           # Random seed for reproducibility
+output: "outputs/u_map.png"    # Output path for the U component
+output_v: "outputs/v_map.png"  # Output path for the V component
+

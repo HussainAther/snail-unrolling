@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+setup.py
+src/snail_unrolling.egg-info/PKG-INFO
+src/snail_unrolling.egg-info/SOURCES.txt
+src/snail_unrolling.egg-info/dependency_links.txt
+src/snail_unrolling.egg-info/entry_points.txt
+src/snail_unrolling.egg-info/requires.txt
+src/snail_unrolling.egg-info/top_level.txt
+tests/test_axis_finder.py
+tests/test_extractor.py
+tests/test_flatten.py
+tests/test_stitcher.py

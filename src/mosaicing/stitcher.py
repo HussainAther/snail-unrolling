@@ -34,3 +34,16 @@ def stitch_images(images=None, strips_folder="data/processed"):
 
     return result
 
+    result = np.zeros((max_height, total_width, 3), dtype=np.uint8)
+
+    current_x = 0
+    for img in images:
+        result[:img.shape[0], current_x:current_x + img.shape[1]] = img
+        current_x += img.shape[1]
+
+    return result
+
+
+
+if __name__ == "__main__":
+    stitch_images()
