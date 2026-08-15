@@ -96,17 +96,22 @@ def load_strips(
 
 
 def stitch_images(images=None, strips_folder="data/processed"):
-    """
-    Stitch a list of images horizontally. If no images are provided, load from folder.
-    """
     if images is None:
         images = load_strips(strips_folder)
-
     if not images:
-        raise ValueError("No images provided for stitching.")
+        raise ValueError("No images to stitch.")
 
     total_width = sum(img.shape[1] for img in images)
     max_height = max(img.shape[0] for img in images)
+
+    result = np.zeros((max_height, total_width, 3), dtype=np.uint8)
+
+    current_x = 0
+    for img in images:
+        result[:img.shape[0], current_x:current_x + img.shape[1]] = img
+        current_x += img.shape[1]
+
+    return result
 
     result = np.zeros((max_height, total_width, 3), dtype=np.uint8)
 
