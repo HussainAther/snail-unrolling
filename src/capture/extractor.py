@@ -58,6 +58,8 @@ def process_folder(input_folder, output_folder, strip_height_ratio=0.1):
     images = load_images_from_folder(input_folder)
     for idx, img in enumerate(images):
         strip = extract_narrow_strip(img, strip_height_ratio)
+        strip = cv2.equalizeHist(cv2.cvtColor(strip, cv2.COLOR_BGR2GRAY))
+        strip = cv2.cvtColor(strip, cv2.COLOR_GRAY2BGR)
         save_strip(strip, output_folder, f"strip_{idx:03}.png")
 
 # Example usage (comment out if using as a module)

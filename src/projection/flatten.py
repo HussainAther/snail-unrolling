@@ -4,7 +4,9 @@ import cv2
 import numpy as np
 import math
 
-def polar_unroll(image, center, output_shape=(400, 720), r_min=20):
+from src.projection.flatten import unroll_shell
+
+def unroll_shell(image, center, output_shape=(400, 720), r_min=20):
     """
     Unroll a shell image into a flat 2D polar projection.
 
@@ -38,9 +40,16 @@ def polar_unroll(image, center, output_shape=(400, 720), r_min=20):
 
 # Example usage
 if __name__ == "__main__":
-    image_path = "data/raw/snail_001.jpg"
-    image = cv2.imread(image_path)
-    center = (300, 250)  # placeholder — use axis_finder.py for real center
-    unrolled = polar_unroll(image, center)
-    cv2.imwrite("data/processed/unrolled_snail.png", unrolled)
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--image", required=True, help="Input image path")
+    parser.add_argument("--cx", type=int, required=True)
+    parser.add_argument("--cy", type=int, required=True)
+    parser.add_argument("--output", default="unrolled_output.png")
+    args = parser.parse_args()
+
+    img = cv2.imread(args.image)
+    center = (args.cx, args.cy)
+    result = unroll_shell(img, center)
+    cv2.imwrite(args.output, result)
 
